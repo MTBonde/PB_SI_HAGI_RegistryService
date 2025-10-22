@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  registry:
+    build:
+      context: ./RegistryService
+      dockerfile: Dockerfile
+    ports:
+      - "5001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - test-net
+
+networks:
+  test-net:
+    driver: bridge
