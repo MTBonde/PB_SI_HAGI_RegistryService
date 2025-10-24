@@ -10,8 +10,7 @@ namespace RegistryService.Controllers;
 /// Provides endpoints for game servers to register and send heartbeats, and for authenticated users to allocate servers.
 /// </summary>
 [ApiController]
-[Route("api/v{version:apiVersion}/[controller]")]
-[Authorize]
+[Route($"api/{ApiVersion.Route}/[controller]")]
 public class RegistryController : ControllerBase
 {
     private readonly IGameServerRegistry registry;

@@ -67,3 +67,6 @@ app.MapGet("/version", () => ApiVersion.Current);
 // start the application server
 Console.WriteLine("RegistryService listening on http://+:8080");
 app.Run();
+
+// make Program class accessible for integration tests
+public partial class Program { }

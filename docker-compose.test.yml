@@ -9,6 +9,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     networks:
       - test-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
 networks:
   test-net:
