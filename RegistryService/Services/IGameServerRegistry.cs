@@ -4,6 +4,7 @@ namespace RegistryService.Services;
 
 public interface IGameServerRegistry
 {
+    List<GameServer> GetList();
     GameServer? AllocateServer(string userId);
     GameServer? AllocateChosenServer(string userId, string serverId);
     void DisconnectPlayer(string serverId, string userId);

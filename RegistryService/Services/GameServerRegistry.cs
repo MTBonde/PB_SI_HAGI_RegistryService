@@ -80,6 +80,14 @@ public class GameServerRegistry : IGameServerRegistry
         }
     }
 
+    public List<GameServer> GetList()
+    {
+        lock (lockObject)
+        {
+            return servers;
+        }
+    }
+
     /// <summary>
     /// Allocates an available game server for a given user.
     /// </summary>

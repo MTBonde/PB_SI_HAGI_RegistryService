@@ -63,6 +63,13 @@ public class RegistryController : ControllerBase
         });
     }
 
+    [Authorize]
+    [HttpGet("getlist")]
+    public IActionResult GetList()
+    {
+        return Ok(registry.GetList());
+    }
+
     /// <summary>
     /// Receives heartbeat updates from game servers to track their health and current player count.
     /// </summary>
