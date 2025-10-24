@@ -11,11 +11,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
-// TODO JWT validation 
+// JWT validation 
 
 var app = builder.Build();
 
-// TODO setup http contolller
+// setup http contolller
 
 
 if (app.Environment.IsDevelopment())
