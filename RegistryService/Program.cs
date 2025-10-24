@@ -18,7 +18,7 @@ builder.Services.AddSingleton<IGameServerRegistry, GameServerRegistry>();
 
 // configure JWT authentication for securing user endpoints
 var jwtSecret = "superSecretKey@345superSecretKey@345";
-var key = Encoding.ASCII.GetBytes(jwtSecret);
+var key = Encoding.UTF8.GetBytes(jwtSecret);
 
 builder.Services.AddAuthentication(options =>
     {
