@@ -1,12 +1,22 @@
+
+
+using RegistryService;
+
 var builder = WebApplication.CreateBuilder(args);
+Console.WriteLine($"RegistryService v{ApiVersion.Current} starting...");
+
+// lave gameserver registration service som singleton?
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
+// TODO JWT validation 
+
 var app = builder.Build();
 
-app.Logger.LogInformation("RegistryService v{Version} starting...", RegistryService.ApiVersion.Current);
+// TODO setup http contolller
+
 
 if (app.Environment.IsDevelopment())
 {

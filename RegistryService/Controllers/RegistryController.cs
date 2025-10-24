@@ -2,6 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace RegistryService.Controllers;
 
+// DI GSregistration
+// allocate endpoint
+
+
 [ApiController]
 [Route($"api/{ApiVersion.Route}/[controller]")]
 public class RegistryController : ControllerBase
@@ -23,6 +27,8 @@ public class RegistryController : ControllerBase
             serverId = "game1"
         });
     }
+    
+    // heartbeat endpoint
 }
 
 public record RegisterServerRequest(string ServerUrl, int Port);
