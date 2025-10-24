@@ -2,7 +2,7 @@ namespace RegistryService;
 
 public static class ApiVersion
 {
-    public const string Current = "0.2.2";
+    public const string Current = "0.2.3";
     public const string Route = "v" + Current;
 }
 

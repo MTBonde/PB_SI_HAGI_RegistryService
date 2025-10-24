@@ -27,7 +27,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           IMAGE_NAME=ghcr.io/mtbonde/hagi-registryservice
-          VERSION=0.2.2
+          VERSION=0.2.3
 
           docker build -t $IMAGE_NAME:$VERSION -t $IMAGE_NAME:latest ./RegistryService
           docker push $IMAGE_NAME --all-tags
