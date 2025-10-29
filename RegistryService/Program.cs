@@ -1,4 +1,5 @@
 using System.Text;
+using Hagi.Robust;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using RegistryService;
@@ -12,6 +13,7 @@ Console.WriteLine($"RegistryService v{ApiVersion.Current} starting...");
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHagiResilience(); // add rubostness from our nuget
 
 // register gameserverregistry as singleton 
 builder.Services.AddSingleton<IGameServerRegistry, GameServerRegistry>();
@@ -61,8 +63,9 @@ app.MapControllers();
 
 // configure health check and utility endpoints
 app.MapGet("/ping", () => "pong");
-app.MapGet("/health", () => "healthy");
 app.MapGet("/version", () => ApiVersion.Current);
+
+app.MapReadinessEndpoint(); // add end point readyness from our nuget
 
 // start the application server
 Console.WriteLine("RegistryService listening on http://+:8080");
