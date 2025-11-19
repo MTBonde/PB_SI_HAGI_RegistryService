@@ -1,3 +1,14 @@
+## 0.4.0 (2025-11-19)
+
+#### Feature
+
+* **ci:** integrate semantic versioning with automated (34bf5e97)
+
+#### Code Refactoring
+
+* **tests:** remove redundant health check test from `RegistryIntegrationTests` (d3e04400)
+
+
 ## 0.3.0 (2025-01-19)
 
 #### Features
