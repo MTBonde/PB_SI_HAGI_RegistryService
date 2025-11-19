@@ -19,7 +19,7 @@ string GetApplicationVersion()
     }
     catch (Exception)
     {
-        // If reading fails, fall back to ApiVersion
+        // If reading fails, fall back to ApiVersion.
     }
 
     return fallbackVersion;
