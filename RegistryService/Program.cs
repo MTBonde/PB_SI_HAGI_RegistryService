@@ -5,9 +5,28 @@ using Microsoft.IdentityModel.Tokens;
 using RegistryService;
 using RegistryService.Services;
 
+string GetApplicationVersion()
+{
+    const string versionFilePath = "version.txt";
+    const string fallbackVersion = ApiVersion.Current;
+
+    try
+    {
+        if (File.Exists(versionFilePath))
+        {
+            return File.ReadAllText(versionFilePath).Trim();
+        }
+    }
+    catch (Exception)
+    {
+        // If reading fails, fall back to ApiVersion
+    }
+
+    return fallbackVersion;
+}
+
 // create web app builder
 var builder = WebApplication.CreateBuilder(args);
-Console.WriteLine($"RegistryService v{ApiVersion.Current} starting...");
 
 // configure API controllers and documentation
 builder.Services.AddControllers();
@@ -44,6 +63,9 @@ builder.Services.AddAuthentication(options =>
 // build the application
 var app = builder.Build();
 
+var applicationVersion = GetApplicationVersion();
+app.Logger.LogInformation("RegistryService v{Version} starting...", applicationVersion);
+
 // enable OpenAPI endpoint in development environment
 if (app.Environment.IsDevelopment())
 {
@@ -63,7 +85,7 @@ app.MapControllers();
 
 // configure health check and utility endpoints
 app.MapGet("/ping", () => "pong");
-app.MapGet("/version", () => ApiVersion.Current);
+app.MapGet("/version", () => new { service = "RegistryService", version = applicationVersion });
 
 app.MapReadinessEndpoint(); // add end point readyness from our nuget
 

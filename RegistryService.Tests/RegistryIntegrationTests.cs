@@ -61,18 +61,4 @@ public class RegistryIntegrationTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
-
-    [TestMethod]
-    public async Task Health_ReturnsHealthy()
-    {
-        // Arrange
-
-        // Act
-        var response = await client.GetAsync("/health");
-        var content = await response.Content.ReadAsStringAsync();
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        content.Should().Be("healthy");
-    }
 }

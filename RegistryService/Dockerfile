@@ -4,9 +4,11 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
-COPY ["RegistryService.csproj", "."]
-RUN dotnet restore
-COPY . .
+COPY ["RegistryService/RegistryService.csproj", "RegistryService/"]
+RUN dotnet restore "RegistryService/RegistryService.csproj"
+COPY RegistryService/ RegistryService/
+COPY version.txt RegistryService/
+WORKDIR /src/RegistryService
 RUN dotnet build "RegistryService.csproj" -c Release -o /app/build
 
 FROM build AS publish
