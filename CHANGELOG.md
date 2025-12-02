@@ -1,3 +1,15 @@
+## 0.4.1 (2025-11-19)
+
+#### Bug Fixes
+
+* **ci:** add workflow dependency chain for reliable releases (2a2b3a9d)
+* add  period in comment (5cfb9354)
+
+#### Chores
+
+* update CHANGELOG.md and version.txt for 0.4.0 [skip ci] (427f6d4d)
+
+
 ## 0.4.0 (2025-11-19)
 
 #### Feature
