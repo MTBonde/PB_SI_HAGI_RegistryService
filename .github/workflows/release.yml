@@ -1,0 +1,27 @@
+# Release pipeline for RegistryService
+# Calls centralized release workflow from PB_Alexor-Workflows
+# Pipeline: CI -> Semantic Release -> Docker Build & Push
+
+name: Release Pipeline
+
+on:
+  push:
+    branches: [main]
+
+# Permissions required for semantic release (contents, actions) and Docker push (packages)
+permissions:
+  contents: write
+  actions: write
+  packages: write
+
+jobs:
+  release:
+    # Reusable workflow: runs full CI -> semantic versioning -> Docker deployment
+    uses: MTBonde/PB_Alexor-Workflows/.github/workflows/release.yml@main
+    with:
+      dotnet-version: '9.0.x'
+      image-name: 'ghcr.io/mtbonde/hagi-registryservice'
+      dockerfile-path: 'RegistryService/Dockerfile'
+      build-context: '.'
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
