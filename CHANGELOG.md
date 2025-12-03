@@ -1,3 +1,14 @@
+## 0.6.3 (2025-12-03)
+
+#### Bug Fixes
+
+* call constructor (7455a8aa)
+
+#### Chores
+
+* update changelog and version for 0.6.2 [skip ci] (f03585d2)
+
+
 ## 0.6.2 (2025-12-03)
 
 #### Bug Fixes
