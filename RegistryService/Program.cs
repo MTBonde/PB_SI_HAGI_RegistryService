@@ -78,7 +78,7 @@ builder.Services.AddAuthentication(options =>
 
 // build the application
 var app = builder.Build();
-
+app.Services.GetRequiredService<IGameServerRegistry>();
 var applicationVersion = GetApplicationVersion();
 app.Logger.LogInformation("RegistryService v{Version} starting...", applicationVersion);
 
