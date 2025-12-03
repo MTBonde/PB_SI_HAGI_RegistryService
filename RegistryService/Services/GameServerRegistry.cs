@@ -263,7 +263,9 @@ public class GameServerRegistry : IGameServerRegistry
             
             try
             {
-                httpClient.BaseAddress = new Uri(server.Host + ":" + server.Port + "/players");
+                var url = $"http://{server.Host}:{server.Port}/players";
+                httpClient.BaseAddress = new Uri(url);
+                Console.WriteLine("using this uri" + url); 
                 var response = await httpClient.GetStringAsync(httpClient.BaseAddress);
                 var data = JsonSerializer.Deserialize<Dictionary<string, int>>(response);
 
