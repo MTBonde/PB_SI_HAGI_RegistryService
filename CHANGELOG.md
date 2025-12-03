@@ -1,3 +1,14 @@
+## 0.6.2 (2025-12-03)
+
+#### Bug Fixes
+
+* console logging (10b73122)
+
+#### Chores
+
+* update changelog and version for 0.6.1 [skip ci] (228934d4)
+
+
 ## 0.6.1 (2025-12-03)
 
 #### Bug Fixes
