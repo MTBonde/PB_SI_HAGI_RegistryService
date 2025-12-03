@@ -1,3 +1,14 @@
+## 0.6.10 (2025-12-03)
+
+#### Bug Fixes
+
+* reuse object for scaling (6d36216c)
+
+#### Chores
+
+* update changelog and version for 0.6.9 [skip ci] (ef411c40)
+
+
 ## 0.6.9 (2025-12-03)
 
 #### Bug Fixes
