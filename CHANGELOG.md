@@ -1,3 +1,14 @@
+## 0.6.9 (2025-12-03)
+
+#### Bug Fixes
+
+* simplify URL construction in GameServerRegistry (35ac3cfb)
+
+#### Chores
+
+* update changelog and version for 0.6.8 [skip ci] (9e1f8526)
+
+
 ## 0.6.8 (2025-12-03)
 
 #### Bug Fixes
