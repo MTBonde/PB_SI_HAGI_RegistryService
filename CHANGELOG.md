@@ -1,3 +1,14 @@
+## 0.6.5 (2025-12-03)
+
+#### Bug Fixes
+
+* switched to staging (temp) (c2d45516)
+
+#### Chores
+
+* update changelog and version for 0.6.4 [skip ci] (d8f985e7)
+
+
 ## 0.6.4 (2025-12-03)
 
 #### Bug Fixes
