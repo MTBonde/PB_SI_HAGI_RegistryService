@@ -1,3 +1,5 @@
+using k8s;
+using k8s.Models;
 using RegistryService.Models;
 
 namespace RegistryService.Services;
@@ -16,8 +18,22 @@ public class GameServerRegistry : IGameServerRegistry
     // Lock for avoiding race condition
     private readonly object lockObject = new();
     
-    public GameServerRegistry()
+    //Kubernetes
+    private IKubernetes? kubernetesClient = null;
+    private const int maxPods = 10;
+    private const string gameServerDeploymentName = "gameserver";
+    private string namespaceParameter = "dev";
+
+
+    public GameServerRegistry(IKubernetes? kubernetesClient)
     {
+        this.kubernetesClient = kubernetesClient;
+
+        if (this.kubernetesClient == null)
+        {
+            Console.WriteLine("Kubernetes was null...");
+        }
+        
         Console.WriteLine("GameServerRegistry initialized (empty - waiting for Unreal server registration)");
     }
 
@@ -59,7 +75,7 @@ public class GameServerRegistry : IGameServerRegistry
     /// <param name="serverId">The unique identifier of the game server to update.</param>
     /// <param name="currentPlayers">The current number of active players on the game server.</param>
     /// <exception cref="NotImplementedException">Thrown when the method is not yet implemented.</exception>
-    public void Heartbeat(string serverId, int currentPlayers)
+    public void Heartbeat(string serverId, int currentPlayers) //TODO: get current players
     {
         lock (lockObject)
         {
@@ -77,6 +93,8 @@ public class GameServerRegistry : IGameServerRegistry
             server.CurrentPlayers = currentPlayers;
             server.Status = currentPlayers >= server.MaxPlayers ? "full" : "available";
             Console.WriteLine($"Heartbeat from {serverId}: {currentPlayers}/{server.MaxPlayers} players (status: {server.Status})");
+
+            Task.Run(async()=>await CheckServers());
         }
     }
 
@@ -189,6 +207,74 @@ public class GameServerRegistry : IGameServerRegistry
 
             Console.WriteLine($"Allocated chosen server {server.ServerId} to user {userId}. Players: {server.CurrentPlayers}/{server.MaxPlayers}");
             return server;
+        }
+    }
+
+    public async Task CheckServers()
+    {
+        if(kubernetesClient == null)
+        {
+            Console.WriteLine("KubernetesClient not set - cannot create server pods");
+            return;
+        }
+
+        List<GameServer> serversToCheck = new List<GameServer>();
+
+        bool serverNeeded = false;
+        serversToCheck = servers;
+
+        if (serversToCheck.Count == 0)
+        {
+            return;
+        }
+            
+        var currentState = await kubernetesClient.AppsV1.ReadNamespacedDeploymentScaleAsync(gameServerDeploymentName, namespaceParameter, true);
+
+        int totalServers = 0;
+        int desiredReplicas = 0;
+        
+        if (currentState.Spec.Replicas != null)
+        {
+            int currentReplicas = currentState.Spec.Replicas.Value;
+            totalServers = Math.Max(serversToCheck.Count, currentReplicas);
+            desiredReplicas = currentReplicas;
+        }
+
+        List<GameServer> emptyGameServers = serversToCheck.Where(server => server.CurrentPlayers <= 0).ToList();
+        
+        //------------Scaling------------
+            
+        if (emptyGameServers.Count == 0 && totalServers < maxPods) 
+        {
+            //Create new server
+            desiredReplicas = totalServers + 1;
+            Console.WriteLine("SCALING - New server amount desired: " + desiredReplicas);
+        }
+        else if (emptyGameServers.Count > 1 && totalServers > 1)
+        {
+            //Close server
+            desiredReplicas = totalServers - 1;
+            Console.WriteLine("SCALING - Closing server, new desired: " + desiredReplicas);
+        }
+        else
+        {
+            Console.WriteLine("SCALING - Not needed");
+            return;
+        }
+
+        //Apply desired scaling
+        try
+        {
+            V1Scale newSpec = new V1Scale();
+            newSpec.Spec.Replicas = desiredReplicas;
+
+            await kubernetesClient.AppsV1.ReplaceNamespacedDeploymentScaleAsync(newSpec, gameServerDeploymentName, namespaceParameter);
+            Console.WriteLine("SCALING - Scale completed, with size: " +  newSpec.Spec.Replicas.Value);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("ERROR! Scaling is jank and didn't work" + e);
+            throw;
         }
     }
 }
