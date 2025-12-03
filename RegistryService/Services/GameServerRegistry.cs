@@ -1,3 +1,4 @@
+using System.Text.Json;
 using k8s;
 using k8s.Models;
 using RegistryService.Models;
@@ -24,6 +25,8 @@ public class GameServerRegistry : IGameServerRegistry
     private const string gameServerDeploymentName = "gameserver";
     private string namespaceParameter = "dev";
 
+    private HttpClient httpClient = new HttpClient();
+    private Timer timer;
 
     public GameServerRegistry(IKubernetes? kubernetesClient)
     {
@@ -32,6 +35,25 @@ public class GameServerRegistry : IGameServerRegistry
         if (this.kubernetesClient == null)
         {
             Console.WriteLine("Kubernetes was null...");
+        }
+        else
+        {
+            timer = new Timer(
+                callback: async _ =>
+                {
+                    try
+                    {
+                        await CheckServers();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"ERROR in scaling timer: {ex.Message}");
+                    }
+                },
+                state: null,
+                dueTime: TimeSpan.FromSeconds(15),
+                period: TimeSpan.FromSeconds(15)
+            );
         }
         
         Console.WriteLine("GameServerRegistry initialized (empty - waiting for Unreal server registration)");
@@ -75,7 +97,7 @@ public class GameServerRegistry : IGameServerRegistry
     /// <param name="serverId">The unique identifier of the game server to update.</param>
     /// <param name="currentPlayers">The current number of active players on the game server.</param>
     /// <exception cref="NotImplementedException">Thrown when the method is not yet implemented.</exception>
-    public void Heartbeat(string serverId, int currentPlayers) //TODO: get current players
+    public void Heartbeat(string serverId, int currentPlayers)
     {
         lock (lockObject)
         {
@@ -93,8 +115,6 @@ public class GameServerRegistry : IGameServerRegistry
             server.CurrentPlayers = currentPlayers;
             server.Status = currentPlayers >= server.MaxPlayers ? "full" : "available";
             Console.WriteLine($"Heartbeat from {serverId}: {currentPlayers}/{server.MaxPlayers} players (status: {server.Status})");
-
-            Task.Run(async()=>await CheckServers());
         }
     }
 
@@ -226,6 +246,31 @@ public class GameServerRegistry : IGameServerRegistry
         if (serversToCheck.Count == 0)
         {
             return;
+        }
+
+        foreach (var server in serversToCheck)
+        {
+            int playerCount = 0;
+            
+            try
+            {
+                httpClient.BaseAddress = new Uri(server.Host + ":" + server.Port + "/players");
+                var response = await httpClient.GetStringAsync(httpClient.BaseAddress);
+                var data = JsonSerializer.Deserialize<Dictionary<string, int>>(response);
+
+                if (data != null) playerCount = data["players"];
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            if (playerCount != 0)
+            {
+                server.CurrentPlayers = playerCount;
+                Console.WriteLine($"Server {server.ServerId} has {playerCount} players");
+            }
         }
             
         var currentState = await kubernetesClient.AppsV1.ReadNamespacedDeploymentScaleAsync(gameServerDeploymentName, namespaceParameter, true);
