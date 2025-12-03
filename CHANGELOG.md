@@ -1,3 +1,14 @@
+## 0.6.7 (2025-12-03)
+
+#### Bug Fixes
+
+* update URI construction and add debug logging in GameServerRegistry (4f3e2250)
+
+#### Chores
+
+* update changelog and version for 0.6.6 [skip ci] (afcaff8b)
+
+
 ## 0.6.6 (2025-12-03)
 
 #### Bug Fixes
