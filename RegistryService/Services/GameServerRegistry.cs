@@ -245,15 +245,17 @@ public class GameServerRegistry : IGameServerRegistry
             return;
         }
 
+        await DiscoverGameServersAsync();
+        
         List<GameServer> serversToCheck = new List<GameServer>();
 
         bool serverNeeded = false;
         serversToCheck = servers;
 
-        if (serversToCheck.Count == 0)
+        /*if (serversToCheck.Count == 0)
         {
             return;
-        }
+        }*/
 
         foreach (var server in serversToCheck)
         {
@@ -327,6 +329,59 @@ public class GameServerRegistry : IGameServerRegistry
         {
             Console.WriteLine("ERROR! Scaling is jank and didn't work" + e);
             throw;
+        }
+    }
+    
+    private async Task DiscoverGameServersAsync()
+    {
+        try
+        {
+            // List all gameserver pods
+            var pods = await kubernetesClient.CoreV1.ListNamespacedPodAsync(
+                namespaceParameter: namespaceParameter,
+                labelSelector: "app=gameserver"
+            );
+
+            Console.WriteLine($"Discovered {pods.Items.Count} gameserver pods");
+
+            lock (lockObject)
+            {
+                foreach (var pod in pods.Items)
+                {
+                    // Only add running pods
+                    if (pod.Status.Phase != "Running") continue;
+
+                    var serverId = pod.Metadata.Name;
+                    var host = pod.Status.PodIP;
+                    var port = 7777; // Default game port
+
+                    // Check if already registered
+                    if (servers.Any(s => s.ServerId == serverId))
+                    {
+                        Console.WriteLine($"Server {serverId} already registered");
+                        continue;
+                    }
+
+                    // Auto-register the pod
+                    var server = new GameServer
+                    {
+                        ServerId = serverId,
+                        Host = host,
+                        Port = port,
+                        MaxPlayers = 4, // Default, can be read from pod env var later
+                        CurrentPlayers = 0,
+                        Status = "available",
+                        LastHeartbeat = DateTime.UtcNow
+                    };
+
+                    servers.Add(server);
+                    Console.WriteLine($"Auto-registered gameserver: {serverId} at {host}:{port}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR discovering gameservers: {ex.Message}");
         }
     }
 }
