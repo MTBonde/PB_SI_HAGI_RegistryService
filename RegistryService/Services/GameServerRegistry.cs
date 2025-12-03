@@ -352,8 +352,8 @@ public class GameServerRegistry : IGameServerRegistry
                     if (pod.Status.Phase != "Running") continue;
 
                     var serverId = pod.Metadata.Name;
-                    var host = pod.Status.PodIP;
-                    var port = 7777; // Default game port
+                    var host = pod.Status.HostIP;
+                    var port = 30502; // Default game port
 
                     // Check if already registered
                     if (servers.Any(s => s.ServerId == serverId))
