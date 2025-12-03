@@ -1,3 +1,14 @@
+## 0.6.6 (2025-12-03)
+
+#### Bug Fixes
+
+* change port and IP (37376199)
+
+#### Chores
+
+* update changelog and version for 0.6.5 [skip ci] (fcf6d983)
+
+
 ## 0.6.5 (2025-12-03)
 
 #### Bug Fixes
