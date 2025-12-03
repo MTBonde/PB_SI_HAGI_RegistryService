@@ -1,3 +1,14 @@
+## 0.6.1 (2025-12-03)
+
+#### Bug Fixes
+
+* version (f507419f)
+
+#### Chores
+
+* update changelog and version for 0.6.0 [skip ci] (8dc3b814)
+
+
 ## 0.6.0 (2025-12-03)
 
 #### Feature
