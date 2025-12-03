@@ -1,3 +1,14 @@
+## 0.6.0 (2025-12-03)
+
+#### Feature
+
+* check servers loop (658c826a)
+
+#### Chores
+
+* update changelog and version for 0.5.0 [skip ci] (1e2e21c9)
+
+
 ## 0.5.0 (2025-12-03)
 
 #### Feature
