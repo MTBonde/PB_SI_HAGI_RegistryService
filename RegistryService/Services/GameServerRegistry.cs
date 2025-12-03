@@ -296,24 +296,30 @@ public class GameServerRegistry : IGameServerRegistry
         }
 
         List<GameServer> emptyGameServers = serversToCheck.Where(server => server.CurrentPlayers <= 0).ToList();
-        
+
         //------------Scaling------------
-            
-        if (emptyGameServers.Count == 0 && totalServers < maxPods) 
+
+        // EMERGENCY: If way over maxPods, scale down aggressively to maxPods
+        if (totalServers > maxPods)
         {
-            //Create new server
-            desiredReplicas = totalServers + 1;
-            Console.WriteLine("SCALING - New server amount desired: " + desiredReplicas);
+            desiredReplicas = maxPods;
+            Console.WriteLine($"SCALING - EMERGENCY! Servers ({totalServers}) > maxPods ({maxPods}). Scaling down to {desiredReplicas}");
         }
+        // Scale UP only if NO empty servers AND under maxPods
+        else if (emptyGameServers.Count == 0 && totalServers < maxPods)
+        {
+            desiredReplicas = totalServers + 1;
+            Console.WriteLine($"SCALING - No empty servers. Scaling UP to {desiredReplicas}");
+        }
+        // Scale DOWN if more than 1 empty server (keep 1 as buffer)
         else if (emptyGameServers.Count > 1 && totalServers > 1)
         {
-            //Close server
             desiredReplicas = totalServers - 1;
-            Console.WriteLine("SCALING - Closing server, new desired: " + desiredReplicas);
+            Console.WriteLine($"SCALING - {emptyGameServers.Count} empty servers. Scaling DOWN to {desiredReplicas}");
         }
         else
         {
-            Console.WriteLine("SCALING - Not needed");
+            Console.WriteLine($"SCALING - Not needed (total: {totalServers}, empty: {emptyGameServers.Count})");
             return;
         }
 
