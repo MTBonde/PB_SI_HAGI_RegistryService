@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using RegistryService;
 using RegistryService.Services;
+using k8s;
+using k8s.KubeConfigModels;
 
 string GetApplicationVersion()
 {
@@ -33,6 +35,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHagiResilience(); // add rubostness from our nuget
+
+try
+{
+    var k8sConfig = KubernetesClientConfiguration.InClusterConfig();
+    Kubernetes kubernetes = new Kubernetes(k8sConfig);
+
+    builder.Services.AddSingleton<IKubernetes>(kubernetes);
+    Console.WriteLine("Registered Kubernetes client");
+}
+catch (Exception e)
+{
+    Console.WriteLine("ERROR! Failed to create Kubernetes. Reason: " + e);
+    throw;
+}
 
 // register gameserverregistry as singleton 
 builder.Services.AddSingleton<IGameServerRegistry, GameServerRegistry>();
