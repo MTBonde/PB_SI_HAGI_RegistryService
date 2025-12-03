@@ -1,3 +1,14 @@
+## 0.6.8 (2025-12-03)
+
+#### Bug Fixes
+
+* update hardcoded port in GameServerRegistry URI construction (4422a028)
+
+#### Chores
+
+* update changelog and version for 0.6.7 [skip ci] (14f4e627)
+
+
 ## 0.6.7 (2025-12-03)
 
 #### Bug Fixes
