@@ -320,11 +320,15 @@ public class GameServerRegistry : IGameServerRegistry
         //Apply desired scaling
         try
         {
-            V1Scale newSpec = new V1Scale();
-            newSpec.Spec.Replicas = desiredReplicas;
+            // Reuse currentState
+            currentState.Spec.Replicas = desiredReplicas;
 
-            await kubernetesClient.AppsV1.ReplaceNamespacedDeploymentScaleAsync(newSpec, gameServerDeploymentName, namespaceParameter);
-            Console.WriteLine("SCALING - Scale completed, with size: " +  newSpec.Spec.Replicas.Value);
+            await kubernetesClient.AppsV1.ReplaceNamespacedDeploymentScaleAsync(
+                currentState,
+                gameServerDeploymentName,
+                namespaceParameter);
+
+            Console.WriteLine($"SCALING - Scale completed, with size: {desiredReplicas}");
         }
         catch (Exception e)
         {
