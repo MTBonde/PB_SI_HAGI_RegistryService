@@ -24,7 +24,7 @@ string GetApplicationVersion()
         // If reading fails, fall back to ApiVersion
     }
 
-    return fallbackVersion;
+    return "fail";
 }
 
 // create web app builder
