@@ -23,7 +23,7 @@ public class GameServerRegistry : IGameServerRegistry
     private IKubernetes? kubernetesClient = null;
     private const int maxPods = 10;
     private const string gameServerDeploymentName = "gameserver";
-    private string namespaceParameter = "dev";
+    private string namespaceParameter = "staging";
 
     private HttpClient httpClient = new HttpClient();
     private Timer timer;
