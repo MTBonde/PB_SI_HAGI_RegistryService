@@ -1,3 +1,18 @@
+## 0.5.0 (2025-12-03)
+
+#### Feature
+
+* removed testing (e94da69e)
+
+#### Code Refactoring
+
+* **workflows:** consolidate CI, Semantic Release, and CD pipelines (4342be2b)
+
+#### Chores
+
+* update CHANGELOG.md and version.txt for 0.4.1 [skip ci] (73e486b7)
+
+
 ## 0.4.1 (2025-11-19)
 
 #### Bug Fixes
