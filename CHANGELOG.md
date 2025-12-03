@@ -1,3 +1,14 @@
+## 0.6.4 (2025-12-03)
+
+#### Bug Fixes
+
+* Auto discover server (22ce088b)
+
+#### Chores
+
+* update changelog and version for 0.6.3 [skip ci] (9f764d14)
+
+
 ## 0.6.3 (2025-12-03)
 
 #### Bug Fixes
