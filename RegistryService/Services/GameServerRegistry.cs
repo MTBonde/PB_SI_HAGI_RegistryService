@@ -39,23 +39,28 @@ public class GameServerRegistry : IGameServerRegistry
         else
         {
             timer = new Timer(
-                callback: async _ =>
+                callback: _ =>
                 {
-                    try
+                    Console.WriteLine($"Timer tick - starting CheckServers");
+                    _ = Task.Run(async () =>
                     {
-                        await CheckServers();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"ERROR in scaling timer: {ex.Message}");
-                    }
+                        try
+                        {
+                            await CheckServers();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"ERROR in scaling: {ex}");
+                        }
+                    });
                 },
                 state: null,
                 dueTime: TimeSpan.FromSeconds(15),
                 period: TimeSpan.FromSeconds(15)
             );
+            Console.WriteLine("TIMER STARTED - Will check servers every 15 seconds");
         }
-        
+
         Console.WriteLine("GameServerRegistry initialized (empty - waiting for Unreal server registration)");
     }
 
@@ -232,6 +237,8 @@ public class GameServerRegistry : IGameServerRegistry
 
     public async Task CheckServers()
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] CheckServers CALLED");
+
         if(kubernetesClient == null)
         {
             Console.WriteLine("KubernetesClient not set - cannot create server pods");
