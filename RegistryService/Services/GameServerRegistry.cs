@@ -24,6 +24,7 @@ public class GameServerRegistry : IGameServerRegistry
     private const int maxPods = 10;
     private const string gameServerDeploymentName = "gameserver";
     private string namespaceParameter = "staging";
+    private bool isScaling = false;
 
     private HttpClient httpClient = new HttpClient();
     private Timer timer;
@@ -298,6 +299,14 @@ public class GameServerRegistry : IGameServerRegistry
         List<GameServer> emptyGameServers = serversToCheck.Where(server => server.CurrentPlayers <= 0).ToList();
 
         //------------Scaling------------
+        
+        if(isScaling)
+        {
+            Console.WriteLine("Already scaling! Won't make new servers just yet...");
+            return;
+        }
+
+        isScaling = true;
 
         // EMERGENCY: If way over maxPods, scale down aggressively to maxPods
         if (totalServers > maxPods)
@@ -320,6 +329,7 @@ public class GameServerRegistry : IGameServerRegistry
         else
         {
             Console.WriteLine($"SCALING - Not needed (total: {totalServers}, empty: {emptyGameServers.Count})");
+            isScaling = false;
             return;
         }
 
@@ -335,10 +345,12 @@ public class GameServerRegistry : IGameServerRegistry
                 namespaceParameter);
 
             Console.WriteLine($"SCALING - Scale completed, with size: {desiredReplicas}");
+            isScaling = false;
         }
         catch (Exception e)
         {
             Console.WriteLine("ERROR! Scaling is jank and didn't work" + e);
+            isScaling = false;
             throw;
         }
     }
