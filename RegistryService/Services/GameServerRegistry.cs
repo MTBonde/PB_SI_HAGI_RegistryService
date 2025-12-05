@@ -23,7 +23,7 @@ public class GameServerRegistry : IGameServerRegistry
     private IKubernetes? kubernetesClient = null;
     private const int maxPods = 10;
     private const string gameServerDeploymentName = "gameserver";
-    private string namespaceParameter = "staging";
+    private string namespaceParameter = "staging"; // Fallback for local dev; overridden from K8s service account in production
 
     private HttpClient httpClient = new HttpClient();
     private Timer timer;
@@ -38,6 +38,10 @@ public class GameServerRegistry : IGameServerRegistry
         }
         else
         {
+            // Read namespace from Kubernetes service account
+            namespaceParameter = ReadKubernetesNamespaceFromServiceAccount();
+            Console.WriteLine($"Kubernetes namespace detected: {namespaceParameter}");
+
             timer = new Timer(
                 callback: _ =>
                 {
@@ -62,6 +66,18 @@ public class GameServerRegistry : IGameServerRegistry
         }
 
         Console.WriteLine("GameServerRegistry initialized (empty - waiting for Unreal server registration)");
+    }
+
+    private static string ReadKubernetesNamespaceFromServiceAccount()
+    {
+        const string namespacePath = "/var/run/secrets/kubernetes.io/serviceaccount/namespace";
+
+        if (!File.Exists(namespacePath))
+        {
+            throw new InvalidOperationException("Unable to read namespace from service account");
+        }
+
+        return File.ReadAllText(namespacePath).Trim();
     }
 
     /// <summary>
