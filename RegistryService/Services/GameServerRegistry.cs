@@ -23,6 +23,7 @@ public class GameServerRegistry : IGameServerRegistry
     private IKubernetes? kubernetesClient = null;
     private const int maxPods = 10;
     private const string gameServerDeploymentName = "gameserver";
+    private bool isScaling = false;
     private string namespaceParameter = "staging"; // Fallback for local dev; overridden from K8s service account in production
 
     private HttpClient httpClient = new HttpClient();
@@ -314,6 +315,14 @@ public class GameServerRegistry : IGameServerRegistry
         List<GameServer> emptyGameServers = serversToCheck.Where(server => server.CurrentPlayers <= 0).ToList();
 
         //------------Scaling------------
+        
+        if(isScaling)
+        {
+            Console.WriteLine("Already scaling! Won't make new servers just yet...");
+            return;
+        }
+
+        isScaling = true;
 
         // EMERGENCY: If way over maxPods, scale down aggressively to maxPods
         if (totalServers > maxPods)
@@ -336,6 +345,7 @@ public class GameServerRegistry : IGameServerRegistry
         else
         {
             Console.WriteLine($"SCALING - Not needed (total: {totalServers}, empty: {emptyGameServers.Count})");
+            isScaling = false;
             return;
         }
 
@@ -351,10 +361,12 @@ public class GameServerRegistry : IGameServerRegistry
                 namespaceParameter);
 
             Console.WriteLine($"SCALING - Scale completed, with size: {desiredReplicas}");
+            isScaling = false;
         }
         catch (Exception e)
         {
             Console.WriteLine("ERROR! Scaling is jank and didn't work" + e);
+            isScaling = false;
             throw;
         }
     }

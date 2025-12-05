@@ -1,3 +1,25 @@
+## 0.6.12 (2025-12-04)
+
+#### Bug Fixes
+
+* implemented server scale bool (bb346edf)
+
+#### Chores
+
+* update changelog and version for 0.6.11 [skip ci] (b2687a73)
+
+
+## 0.6.11 (2025-12-03)
+
+#### Bug Fixes
+
+* emergency fix 118 tha fuck min server brænder! (0311770a)
+
+#### Chores
+
+* update changelog and version for 0.6.10 [skip ci] (ec4641de)
+
+
 ## 0.6.10 (2025-12-03)
 
 #### Bug Fixes
