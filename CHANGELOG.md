@@ -1,3 +1,14 @@
+## 0.6.13 (2025-12-05)
+
+#### Bug Fixes
+
+* fetch Kubernetes namespace dynamically from service account in GameServerRegistry (c4bc24c1)
+
+#### Chores
+
+* update changelog and version for 0.6.12 [skip ci] (83f5a393)
+
+
 ## 0.6.12 (2025-12-04)
 
 #### Bug Fixes
